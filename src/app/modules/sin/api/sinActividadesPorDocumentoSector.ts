@@ -12,8 +12,6 @@ const query = gql`
   query ACTIVIDADES_POR_DOCUMENTO_SECTOR($codDocSector: Int!) {
     sinActividadesPorDocumentoSector(codigoDocumentoSector: $codDocSector) {
       codigoActividad
-      codigoCaeb
-      descripcion
       codigoDocumentoSector
       tipoDocumentoSector
       actividadEconomica

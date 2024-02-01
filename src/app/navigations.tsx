@@ -19,7 +19,7 @@ export const navigations: NavigationProps[] = [
   {
     name: 'Página Principal',
     path: '/dashboard/default',
-    icon: 'dashboard',
+    icon: 'home',
   },
   {
     name: 'MENUS',
@@ -30,6 +30,11 @@ export const navigations: NavigationProps[] = [
     name: 'Emisión',
     icon: 'shopping_cart',
     children: [
+      {
+        name: ventasRoutesMap.emision.name,
+        iconText: 'EMI',
+        path: ventasRoutesMap.emision.path,
+      },
       {
         name: ventasRoutesMap.emisionMasiva.name,
         iconText: 'EMMA',

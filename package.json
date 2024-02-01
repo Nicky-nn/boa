@@ -25,6 +25,7 @@
     "@mui/x-data-grid": "^6.4.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@sweetalert2/theme-material-ui": "^5.0.15",
+    "@tanstack/query-core": "^5.18.0",
     "@tanstack/react-query": "^4.29.7",
     "@tanstack/react-table": "^8.9.1",
     "@tinymce/tinymce-react": "^4.3.0",
@@ -88,6 +89,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "prettier": "^2.8.8",
     "typescript": "*",
-    "vite": "^4.3.5"
+    "vite": "^4.3.5",
+    "vite-plugin-pwa": "^0.17.5"
   }
 }

@@ -15,4 +15,9 @@ export const ventasRoutesMap = {
     path: `/giftcard/emitir`,
     name: 'Emitir Gift Card',
   },
+  emision: {
+    path: `/ventas/emision`,
+    name: 'Emision',
+  },
 }
+

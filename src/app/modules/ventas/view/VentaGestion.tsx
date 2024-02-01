@@ -58,12 +58,12 @@ const tableColumns: MRT_ColumnDef<FacturaBoaProps>[] = [
     header: 'Nro. Documento',
     accessorFn: (row) => (
       <span>
-        {row.cliente.numeroDocumento}{' '}
-        {row.cliente.complemento ? `-${row.cliente.complemento}` : ''}
+        {row.cliente && row.cliente.numeroDocumento ? row.cliente.numeroDocumento : 'N/A'}{' '}
+        {row.cliente && row.cliente.complemento ? `-${row.cliente.complemento}` : ''}
       </span>
     ),
     filterFn: (row, id, filterValue) =>
-      row.original.cliente.numeroDocumento.startsWith(filterValue),
+      (row.original.cliente.numeroDocumento || '').startsWith(filterValue),
     maxSize: 150,
   },
   {
@@ -89,7 +89,11 @@ const tableColumns: MRT_ColumnDef<FacturaBoaProps>[] = [
   {
     header: 'Moneda',
     accessorKey: 'moneda.descripcion',
-    accessorFn: (row) => <strong>{row.moneda.descripcion}</strong>,
+    accessorFn: (row) => (
+      <strong>
+        {row.moneda && row.moneda.descripcion ? row.moneda.descripcion : 'N/A'}
+      </strong>
+    ),
     size: 110,
     enableColumnFilter: false,
   },
@@ -348,3 +352,4 @@ const VentaGestion: FC<any> = () => {
 }
 
 export default VentaGestion
+

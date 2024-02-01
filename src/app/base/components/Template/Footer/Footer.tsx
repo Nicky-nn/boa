@@ -25,7 +25,6 @@ const AppFooter = styled(Toolbar)(() => ({
 }))
 
 const FooterContent = styled('div')(() => ({
-  width: '100%',
   display: 'flex',
   alignItems: 'center',
   padding: '0px 1rem',
@@ -43,18 +42,15 @@ const Footer: FC<any> = () => {
     <ThemeProvider theme={footerTheme}>
       <AppBar color="primary" position="static" sx={{ zIndex: 96 }}>
         <AppFooter>
-          <FooterContent>
+          <FooterContent sx={{ textAlign: 'center' }}>
             <Span sx={{ m: 'auto' }}></Span>
             <Paragraph sx={{ m: 0 }}>
-              ISI.INVOICE es un producto de &nbsp;
+              ISI.INVOICE es desarrollado por&nbsp;
               <a href="https://integrate.com.bo" target="_blank" rel="noreferrer">
                 INTEGRATE Soluciones Informáticas
               </a>{' '}
               <br />
-              Plantilla{' '}
-              <a target="_blank" href="https://matx-react.ui-lib.com/" rel="noreferrer">
-                MatX
-              </a>
+              Todos los derechos reservados © {new Date().getFullYear()}
             </Paragraph>
           </FooterContent>
         </AppFooter>

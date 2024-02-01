@@ -7,8 +7,14 @@ import EmisionMasiva from './view/emisionMasiva/EmisionMasiva'
 
 const AppVentaGestion = Loadable(lazy(() => import('./view/VentaGestion')))
 const AppPaquetes = Loadable(lazy(() => import('./view/emisionPaquetes/EmisionPaquetes')))
+const AppVentaEmision = Loadable(lazy(() => import('./view/VentaRegistro')))
 
 const ventasRoutes = [
+  {
+    path: ventasRoutesMap.emision.path,
+    element: <AppVentaEmision />,
+    auth: authRoles.admin,
+  },
   {
     path: ventasRoutesMap.emisionMasiva.path,
     element: <EmisionMasiva />,
@@ -27,3 +33,4 @@ const ventasRoutes = [
 ]
 
 export default ventasRoutes
+
