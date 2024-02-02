@@ -1,6 +1,13 @@
 export interface SinUnidadMedidaProps {
-  codigoClasificador: string
+  codigoClasificador: number
   descripcion: string
+}
+
+export interface subPartidaArancelariaProps {
+  subPartidaArancelaria: string
+  descripcion: string
+  alicuotaPorcentual: number
+  alicuotaEspecifica: number
 }
 
 export interface SinTipoDocumentoSectorProps {
@@ -44,6 +51,7 @@ export interface SinTipoFacturaProps {
 }
 
 export interface SinActividadesEconomicasProps {
+  codigoActividad: string
   codigoCaeb: string
   descripcion: string
   tipoActividad: string
@@ -51,10 +59,16 @@ export interface SinActividadesEconomicasProps {
 
 export interface SinActividadesProps {
   codigoCaeb: string
+  codigoActividad: string
   descripcion: string
   tipoActividad: string
   codigoDocumentoSector: number
   tipoDocumentoSector: string
+  actividadEconomica: string
+}
+export interface codigoProductoSinProps {
+  codigoProducto: string
+  descripcionProducto: string
 }
 
 export interface SinActividadesPorDocumentoSector {
@@ -71,12 +85,28 @@ export interface SinActividadesDocumentoSectorProps {
   tipoDocumentoSector: string
   actividadEconomica: string
   tipoActividad: string
+  codigoCaeb: string
+  descripcion: string
 }
 
 export interface SinProductoServicioProps {
   codigoActividad: string
   codigoProducto: string
   descripcionProducto: string
+}
+
+export interface SinProductoServicioPorDocumentoSectorProps {
+  codigoActividad: string
+  codigoProducto: string
+  descripcionProducto: string
+}
+
+export interface SinProductoServicioPorActividadProps {
+  codigoActividad: string
+  codigoProducto: string
+  descripcionProducto: string
+  codigoClasificador: string
+  descripcion: string
 }
 
 export interface MontoProps {
@@ -97,3 +127,4 @@ export interface SinCuisProps {
   codigo: string
   fechaVigencia: string
 }
+

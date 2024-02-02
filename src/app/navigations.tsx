@@ -52,6 +52,34 @@ export const navigations: NavigationProps[] = [
       },
     ],
   },
+{
+  name: 'Clasificadores',
+  icon: 'category',
+  badge: { value: '', color: 'secondary' },
+  children: [
+    {
+      name: 'Iata Aerolineas',
+      path: '/clasificadores/actividades-economicas',
+      iconText: 'IE',
+    },
+    {
+      name: 'Agencia de Viajes',
+      path: '/clasificadores/documentos-sector',
+      iconText: 'AV',
+    },
+    {
+      name: 'Origen Servicios',
+      path: '/clasificadores/paises',
+      iconText: 'PA',
+    },
+    {
+      name: 'Tipo Transacción',
+      path: '/clasificadores/regimenes',
+      iconText: 'RE',
+    },
+  ],
+
+},
   {
     name: 'Clientes',
     icon: 'person_sharp',

@@ -1,7 +1,7 @@
 import { FormControl, FormHelperText } from '@mui/material'
 import React, { FunctionComponent, useEffect } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
-import Select from 'react-select'
+import Select, { PropsValue } from 'react-select'
 
 import AlertError from '../../../../base/components/Alert/AlertError'
 import AlertLoading from '../../../../base/components/Alert/AlertLoading'
@@ -37,9 +37,6 @@ const DatosActividadEconomica: FunctionComponent<Props> = (props) => {
   const { user } = useAuth()
   const { actividades, actIsError, actError, actLoading } =
     useQueryActividadesPorDocumentoSector()
-
-    console.log('actividades', actividades)
-
   useEffect(() => {
     if (!actLoading && actividades && actividades.length > 0) {
       if (isEmptyValue(getValues('actividadEconomica'))) {
@@ -80,7 +77,9 @@ const DatosActividadEconomica: FunctionComponent<Props> = (props) => {
                   styles={reactSelectStyles}
                   name="actividadEconomica"
                   placeholder={'Seleccione la actividad económica'}
-                  value={field.value}
+                  value={
+                    field.value as unknown as PropsValue<SinActividadesDocumentoSectorProps>
+                  }
                   onChange={async (val: any) => {
                     field.onChange(val)
                     setValue('detalle', [])
@@ -108,3 +107,4 @@ const DatosActividadEconomica: FunctionComponent<Props> = (props) => {
 }
 
 export default DatosActividadEconomica
+

@@ -53,6 +53,16 @@ export interface FacturaInputProps {
   inputMontoPagar: number
   inputVuelto: number
   moneda?: MonedaProps
+  nombrePasajero?: string
+  codigoIataLineaAerea? : string
+  codigoIataAgenteViajes?: string
+  codigoOrigenServicio?: string
+  codigoTipoTransaccion?: string
+  nitAgenteViajes?: string
+  numeroDocumentoPasajero?: string
+  montoTarifa?: number
+  montoSujetoIva?: number
+  montoTotal?: number
 }
 
 /**
