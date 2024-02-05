@@ -44,7 +44,6 @@ const AuthGuard: FC<Props> = ({ children }: Props) => {
     // AND COMMENT OUT BELOW LINE
     let authenticated = isAuthenticated && hasPermission
 
-    console.log('app,auth,authguard', pathname, authenticated)
     return (
       <>
         {isAuthenticated ? (

@@ -59,22 +59,22 @@ export const navigations: NavigationProps[] = [
   children: [
     {
       name: 'Iata Aerolineas',
-      path: '/clasificadores/actividades-economicas',
+      path: '/clasificadores/iata-aerolineas',
       iconText: 'IE',
     },
     {
       name: 'Agencia de Viajes',
-      path: '/clasificadores/documentos-sector',
+      path: '/clasificadores/agencia-de-viaje',
       iconText: 'AV',
     },
     {
       name: 'Origen Servicios',
-      path: '/clasificadores/paises',
+      path: '/clasificadores/origen-servicios',
       iconText: 'PA',
     },
     {
       name: 'Tipo Transacción',
-      path: '/clasificadores/regimenes',
+      path: '/clasificadores/tipo-transaccion',
       iconText: 'RE',
     },
   ],

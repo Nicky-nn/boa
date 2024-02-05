@@ -45,7 +45,7 @@ import {
 import RepresentacionGraficaUrls from '../../../../base/components/RepresentacionGrafica/RepresentacionGraficaUrls'
 import SimpleCard from '../../../../base/components/Template/Cards/SimpleCard'
 import useAuth from '../../../../base/hooks/useAuth'
-import { genReplaceEmpty, openInNewTab } from '../../../../utils/helper'
+import { genReplaceEmpty, handleSelect, openInNewTab } from '../../../../utils/helper'
 import { notError } from '../../../../utils/notification'
 import { swalAsyncConfirmDialog, swalException } from '../../../../utils/swal'
 import { genRound } from '../../../../utils/utils'
@@ -67,6 +67,7 @@ import { apiClienteBusqueda } from '../../../clientes/api/clienteBusqueda.api'
 import ClienteRegistroDialog from '../../../clientes/view/registro/ClienteRegistroDialog'
 import ClienteExplorarDialog from '../../../clientes/components/ClienteExplorarDialog'
 import Cliente99001RegistroDialog from '../../../clientes/view/registro/Cliente99001RegistroDialog'
+
 import {
   boaAgenciaViajesListado,
   boaIataAerolineaListado,
@@ -74,6 +75,17 @@ import {
   boaTipoTransaccionListado,
 } from '../../api/boaIataAerolineaListado.api'
 import React from 'react'
+import ProveedorRegistro from '../../../Clasificador/view/IataAerRegistroDialog'
+import {
+  AgenciaDeViajesProps,
+  AlicuotaProps,
+  OrigenProps,
+  TipoProps,
+} from '../../../Clasificador/interfaces/alicuota.interface'
+import AgenciaDeViajesDialog from '../../../Clasificador/view/AgenciaDeViajesDialog'
+import OrigenDialog from '../../../Clasificador/view/OrigenDialog'
+import TipoDialog from '../../../Clasificador/view/TipoDialog'
+import { NumeroMask } from '../../../../base/components/MyInputs/NumeroMask'
 
 interface OwnProps {
   form: UseFormReturn<FacturaInputProps>
@@ -96,8 +108,6 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
       formState: { errors },
     },
   } = props
-  const [openDescuentoAdicional, setOpenDescuentoAdicional] = useState(false)
-  const [openArrendamientoFinanciero, setOpenArrendamientoFinanciero] = useState(false)
 
   const mySwal = withReactContent(Swal)
   const inputMoneda = getValues('moneda')
@@ -105,6 +115,7 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
 
   const handleFocus = (event: any) => event.target.select()
   const onSubmit: SubmitHandler<FacturaInputProps> = async (data) => {
+    console.log('data', data)
     const inputFactura = composeFactura(data)
     const validator = await composeFacturaValidator(inputFactura).catch((err: Error) => {
       notError(err.message)
@@ -191,26 +202,26 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
   const [optionsOrigen, setOptionsOrigen] = useState([])
   const [selectedOptionOrigen, setSelectedOptionOrigen] = useState([])
 
-  useEffect(() => {
-    const obtenerDatos = async () => {
-      try {
-        const resp = await boaIataAerolineaListado()
-        const respAgente = await boaAgenciaViajesListado()
-        const respOrigen = await boaOrigenServicioListado()
-        const respTransaccion = await boaTipoTransaccionListado()
-        setoptionsAgente(respAgente)
-        setOptions(resp)
-        setOptionsOrigen(respOrigen)
-        setOptionsTransaccion(respTransaccion)
-      } catch (error) {
-        // Manejar errores, mostrar mensaje, etc.
-        console.error('Error al obtener datos:', error)
-      }
+  const obtenerDatos = async () => {
+    try {
+      const resp = await boaIataAerolineaListado()
+      const respAgente = await boaAgenciaViajesListado()
+      const respOrigen = await boaOrigenServicioListado()
+      const respTransaccion = await boaTipoTransaccionListado()
+      setoptionsAgente(respAgente)
+      setOptions(resp)
+      setOptionsOrigen(respOrigen)
+      setOptionsTransaccion(respTransaccion)
+    } catch (error) {
+      // Manejar errores, mostrar mensaje, etc.
+      console.error('Error al obtener datos:', error)
     }
+  }
 
+  // Llama a obtenerDatos dentro del useEffect
+  useEffect(() => {
     obtenerDatos()
   }, [])
-
   /* FIN OBTENIENDO DATOS DE LA API PATA IATA AEROLINA AEREA*/
 
   const fetchClientes = async (inputValue: string): Promise<any[]> => {
@@ -227,6 +238,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
   }
   const [isChecked, setIsChecked] = useState(false)
   const [openExplorarCliente, setExplorarCliente] = useState(false)
+  const [openNuevoProveedor, setOpenNuevoProveedor] = useState<boolean>(false)
+  const [openNuevoAgenciaDeViajes, setOpenNuevoAgenciaDeViajes] = useState<boolean>(false)
+  const [openNuevoOrigen, setOpenNuevoOrigen] = useState<boolean>(false)
+  const [openNuevoTipo, setOpenTipo] = useState<boolean>(false)
+
   const [isCheckedExecpcion, setIsCheckedExecpcion] = useState(false)
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
   const [openNuevoCliente, setNuevoCliente] = useState(false)
@@ -666,6 +682,7 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             }
                             getOptionValue={(ps) => ps.codigoIataLineaAerea.toString()}
                             isClearable={true}
+                            onMenuOpen={() => obtenerDatos()}
                           />
                         </FormControl>
                       )}
@@ -674,9 +691,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       <Link
                         component="button"
                         variant="body2"
-                        sx={{ fontSize: '0.8rem' }} // Ajusta el tamaño de fuente según tus preferencias
-                        onClick={() => {
-                          console.info("I'm a button.")
+                        sx={{ fontSize: '0.8rem' }}
+                        onClick={(event) => {
+                          event.preventDefault()
+                          setOpenNuevoProveedor(true)
+                          obtenerDatos()
                         }}
                       >
                         ¿Nuevo Código?
@@ -696,13 +715,17 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             name="codigoIataAgenteViajes"
                             placeholder={'Seleccione...'}
                             value={selectedOptionAgente}
-                            onChange={(selected) => setSelectedOptionAgente(selected)}
+                            onChange={(selected) => {
+                              setSelectedOptionAgente(selected)
+                              setValue('nitAgenteViajes', selected?.nitAgenteViajes)
+                            }}
                             options={optionsAgente}
                             getOptionLabel={(ps) =>
                               `${ps.nitAgenteViajes}  ${ps.descripcion}  ${ps.codigoIataAgenteViajes}`
                             }
                             getOptionValue={(ps) => ps.codigoIataAgenteViajes}
                             isClearable={true}
+                            onMenuClose={() => obtenerDatos()}
                           />
                         </FormControl>
                       )}
@@ -712,8 +735,10 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                         component="button"
                         variant="body2"
                         sx={{ fontSize: '0.8rem' }} // Ajusta el tamaño de fuente según tus preferencias
-                        onClick={() => {
-                          console.info("I'm a button.")
+                        onClick={(event) => {
+                          event.preventDefault()
+                          setOpenNuevoAgenciaDeViajes(true)
+                          obtenerDatos()
                         }}
                       >
                         ¿Nuevo Código Agente?
@@ -725,18 +750,16 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       control={control}
                       name={'nitAgenteViajes'}
                       render={({ field }) => (
-                        <FormTextField
-                          name="nombre"
-                          label="NIT Agente de Viajes"
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={() => {
-                            const nombreProducto = field.value
-                            // const nuevoCodigoProducto = generarCodigoProducto(nombreProducto)
-                            // setCodigoProducto(nuevoCodigoProducto)
-                            field.onBlur()
-                          }}
+                        <TextField
+                          {...field}
                           error={Boolean(errors.nitAgenteViajes)}
+                          fullWidth
+                          name={'nitAgenteViajes'}
+                          size={'small'}
+                          label="NIT Agente de Viajes"
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
                           helperText={errors.nitAgenteViajes?.message}
                         />
                       )}
@@ -747,20 +770,6 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       control={control}
                       name={'codigoOrigenServicio'}
                       render={({ field }) => (
-                        // <FormTextField
-                        //   name="nombre"
-                        //   label="Código Origen Servicio"
-                        //   value={field.value}
-                        //   onChange={field.onChange}
-                        //   onBlur={() => {
-                        //     const nombreProducto = field.value
-                        //     // const nuevoCodigoProducto = generarCodigoProducto(nombreProducto)
-                        //     // setCodigoProducto(nuevoCodigoProducto)
-                        //     field.onBlur()
-                        //   }}
-                        //   error={Boolean(errors.numeroTarjeta)}
-                        //   helperText={errors.numeroTarjeta?.message}
-                        // />
                         <FormControl fullWidth component={'div'}>
                           <MyInputLabel shrink>Código Origen Servicio</MyInputLabel>
                           <Select
@@ -776,6 +785,7 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             }
                             getOptionValue={(ps) => ps.codigoOrigenServicio}
                             isClearable={true}
+                            onMenuClose={() => obtenerDatos()}
                           />
                         </FormControl>
                       )}
@@ -785,8 +795,10 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                         component="button"
                         variant="body2"
                         sx={{ fontSize: '0.8rem' }} // Ajusta el tamaño de fuente según tus preferencias
-                        onClick={() => {
-                          console.info("I'm a button.")
+                        onClick={(event) => {
+                          event.preventDefault()
+                          setOpenNuevoOrigen(true)
+                          obtenerDatos()
                         }}
                       >
                         ¿Nuevo Código Origen?
@@ -799,7 +811,7 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       name={'codigoTipoTransaccion'}
                       render={({ field }) => (
                         <FormControl fullWidth component={'div'}>
-                          <MyInputLabel shrink>Código IATA Línea Aérea</MyInputLabel>
+                          <MyInputLabel shrink>Código Tipo Transacción</MyInputLabel>
                           <Select
                             styles={reactSelectStyles}
                             menuPosition={'fixed'}
@@ -815,14 +827,17 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             }
                             getOptionValue={(ps) => ps.codigoTipoTransaccion}
                             isClearable={true}
+                            onMenuClose={() => obtenerDatos()}
                           />
                           <Box display="flex" justifyContent="flex-end">
                             <Link
                               component="button"
                               variant="body2"
                               sx={{ fontSize: '0.8rem' }} // Ajusta el tamaño de fuente según tus preferencias
-                              onClick={() => {
-                                console.info("I'm a button.")
+                              onClick={(event) => {
+                                event.preventDefault()
+                                setOpenTipo(true)
+                                obtenerDatos()
                               }}
                             >
                               ¿Nuevo Código Transacción?
@@ -839,20 +854,32 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       control={control}
                       name={'montoTarifa'}
                       render={({ field }) => (
-                        <FormTextField
-                          name="montoTarifa"
-                          label="Monto Tarifa"
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={() => {
-                            const nombreProducto = field.value
-                            // const nuevoCodigoProducto = generarCodigoProducto(nombreProducto)
-                            // setCodigoProducto(nuevoCodigoProducto)
-                            field.onBlur()
-                          }}
-                          error={Boolean(errors.montoTarifa)}
-                          helperText={errors.montoTarifa?.message}
-                        />
+                        <FormControl fullWidth error={Boolean(errors.montoTarifa)}>
+                          <InputLabel>Monto Tarifa</InputLabel>
+                          <OutlinedInput
+                            {...field}
+                            label={'Monto Tarifa'}
+                            size={'small'}
+                            value={field.value?.toString()}
+                            onFocus={handleSelect}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputComponent={NumeroMask as any}
+                            inputProps={{}}
+                            error={Boolean(errors.montoTarifa)}
+                            // endAdornment={
+                            //   <InputAdornment
+                            //     position="end"
+                            //     style={{ fontStyle: 'italic', color: '#888' }}
+                            //   >
+                            //     {item.moneda.sigla + ' '}
+                            //   </InputAdornment>
+                            // }
+                          />
+                          <FormHelperText>
+                            {errors.montoTarifa?.message || ''}
+                          </FormHelperText>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -861,20 +888,24 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       control={control}
                       name={'montoTotal'}
                       render={({ field }) => (
-                        <FormTextField
-                          name="montoTotal"
-                          label="Monto Total"
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={() => {
-                            const nombreProducto = field.value
-                            // const nuevoCodigoProducto = generarCodigoProducto(nombreProducto)
-                            // setCodigoProducto(nuevoCodigoProducto)
-                            field.onBlur()
-                          }}
-                          error={Boolean(errors.montoTotal)}
-                          helperText={errors.montoTotal?.message}
-                        />
+                        <FormControl fullWidth error={Boolean(errors.montoTotal)}>
+                          <InputLabel>Monto Total</InputLabel>
+                          <OutlinedInput
+                            {...field}
+                            label={'Monto Total'}
+                            size={'small'}
+                            value={field.value?.toString()}
+                            onFocus={handleSelect}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputComponent={NumeroMask as any}
+                            inputProps={{}}
+                            error={Boolean(errors.montoTotal)}
+                          />
+                          <FormHelperText>
+                            {errors.montoTotal?.message || ''}
+                          </FormHelperText>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -883,20 +914,24 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                       control={control}
                       name={'montoSujetoIva'}
                       render={({ field }) => (
-                        <FormTextField
-                          name="montoSujetoIva"
-                          label="Monto Sijeto IVA"
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={() => {
-                            const nombreProducto = field.value
-                            // const nuevoCodigoProducto = generarCodigoProducto(nombreProducto)
-                            // setCodigoProducto(nuevoCodigoProducto)
-                            field.onBlur()
-                          }}
-                          error={Boolean(errors.montoSujetoIva)}
-                          helperText={errors.montoSujetoIva?.message}
-                        />
+                        <FormControl fullWidth error={Boolean(errors.montoSujetoIva)}>
+                          <InputLabel>Monto Sujeto al IVA</InputLabel>
+                          <OutlinedInput
+                            {...field}
+                            label={'Monto Sujeto al IVA'}
+                            size={'small'}
+                            value={field.value?.toString()}
+                            onFocus={handleSelect}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputComponent={NumeroMask as any}
+                            inputProps={{}}
+                            error={Boolean(errors.montoSujetoIva)}
+                          />
+                          <FormHelperText>
+                            {errors.montoSujetoIva?.message || ''}
+                          </FormHelperText>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -967,6 +1002,46 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
             } else {
               setCliente99001(false)
             }
+          }}
+        />
+      </>
+      <>
+        <ProveedorRegistro
+          id={'proveedorRegistroDialog'}
+          keepMounted={false}
+          open={openNuevoProveedor}
+          onClose={(value?: AlicuotaProps) => {
+            setOpenNuevoProveedor(false)
+          }}
+        />
+      </>
+      <>
+        <AgenciaDeViajesDialog
+          id="agenciaDeViajesDialog"
+          keepMounted={false}
+          open={openNuevoAgenciaDeViajes}
+          onClose={(value?: AgenciaDeViajesProps) => {
+            setOpenNuevoAgenciaDeViajes(false)
+          }}
+        />
+      </>
+      <>
+        <OrigenDialog
+          id="origenDialog"
+          keepMounted={false}
+          open={openNuevoOrigen}
+          onClose={(value?: OrigenProps) => {
+            setOpenNuevoOrigen(false)
+          }}
+        />
+      </>
+      <>
+        <TipoDialog
+          id="tipoDialog"
+          keepMounted={false}
+          open={openNuevoTipo}
+          onClose={(value?: TipoProps) => {
+            setOpenTipo(false)
           }}
         />
       </>

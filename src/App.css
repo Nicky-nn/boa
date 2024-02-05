@@ -1,3 +1,19 @@
+/* Estilos personalizados para el scrollbar */
+::-webkit-scrollbar {
+  width: 10px; /* Ancho de la barra */
+  height: 10px; /* Alto de la barra */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #414141; /* Color de la barra */
+  border-radius: 7px; /* Borde redondeado */
+  border-right: 2px solid #414141; /* Borde derecho de la barra */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color de la barra al pasar el cursor por encima */
+}
+
 :root {
   --space: -0.1rem;
   --space-xs: calc(var(--space) / 3);
@@ -84,6 +100,23 @@ button {
   .table-container .table {
     min-width: 600px;
   }
+}
+
+.swal2-styled.swal2-cancel {
+  border: 0;
+  border-radius: 0;
+  background: initial;
+  background-color: rgba(255, 255, 255, 0);
+  color: #e0e0e0;
+  font-size: 1em;
+}
+.swal2-styled.swal2-confirm {
+  border: 0;
+  border-radius: 0.25em;
+  background: initial;
+  background-color: #7066e0;
+  color: #fff;
+  font-size: 1em;
 }
 
 /************************************* RESPONSIVE TABLE *************************/
