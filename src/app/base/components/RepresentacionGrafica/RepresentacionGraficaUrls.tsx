@@ -24,11 +24,12 @@ const RepresentacionGraficaUrls: FunctionComponent<Props> = (props) => {
   const {
     representacionGrafica: { pdf, xml, sin, rollo },
   } = props
+
   return (
     <>
       <Container>
         <List dense>
-          <ListItem>
+          {/* <ListItem>
             <ListItemText
               primary={
                 <Button
@@ -41,7 +42,7 @@ const RepresentacionGraficaUrls: FunctionComponent<Props> = (props) => {
                 </Button>
               }
             />
-          </ListItem>
+          </ListItem> */}
           <ListItem>
             <ListItemText
               primary={
@@ -56,7 +57,7 @@ const RepresentacionGraficaUrls: FunctionComponent<Props> = (props) => {
               }
             />
           </ListItem>
-          <ListItem>
+          {/* <ListItem>
             <ListItemText
               primary={
                 <Button
@@ -69,8 +70,8 @@ const RepresentacionGraficaUrls: FunctionComponent<Props> = (props) => {
                 </Button>
               }
             />
-          </ListItem>
-          <ListItem>
+          </ListItem> */}
+          {/* <ListItem>
             <ListItemText
               primary={
                 <Button
@@ -83,7 +84,7 @@ const RepresentacionGraficaUrls: FunctionComponent<Props> = (props) => {
                 </Button>
               }
             />
-          </ListItem>
+          </ListItem> */}
         </List>
       </Container>
     </>

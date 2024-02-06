@@ -15,62 +15,81 @@ const calculoMonedaBs = (monto: number, tipoCambioBs: number): number => {
 
 export const composeFactura = (fcv: FacturaInputProps): any => {
   const input = {
-    codigoCliente: fcv.cliente!.codigoCliente,
-    actividadEconomica: fcv.actividadEconomica.codigoCaeb,
+    numeroFactura: fcv.numeroFactura,
+    fechaEmision: fcv.fechaEmision,
+    cliente: {
+      codigoCliente: fcv.cliente!.codigoCliente,
+      razonSocial: fcv.cliente!.razonSocial,
+      numeroDocumento: fcv.cliente!.numeroDocumento,
+      complemento: fcv.cliente!.complemento,
+      codigoTipoDocumentoIdentidad: Number(
+        fcv.cliente!.tipoDocumentoIdentidad.codigoClasificador,
+      ),
+      email: fcv.cliente!.email,
+    },
+    actividadEconomica: fcv.actividadEconomica.codigoActividad,
     codigoMetodoPago: fcv.codigoMetodoPago.codigoClasificador,
-    descuentoAdicional: calculoMonedaBs(fcv.descuentoAdicional, fcv.tipoCambio),
-    detalleExtra: fcv.detalleExtra,
-    emailCliente: fcv.emailCliente,
     codigoMoneda: fcv.moneda!.codigo,
     tipoCambio: fcv.moneda!.tipoCambio,
-    detalle: fcv.detalle.map((item) => ({
-      codigoProductoSin: item.codigoProductoSin,
-      // codigoProducto: item.codigoProducto,
-      // descripcion: item.nombre,
-      cantidad: item.cantidad,
-      // unidadMedida: parseInt(item.unidadMedida.codigoClasificador.toString()),
-      precioUnitario: calculoMonedaBs(item.precioUnitario, fcv.tipoCambio),
-      montoDescuento: calculoMonedaBs(item.montoDescuento, fcv.tipoCambio),
-      detalleExtra: genReplaceEmpty(item.detalleExtra, ''),
-    })),
+    nombrePasajero: fcv.nombrePasajero,
+    numeroDocumentoPasajero: fcv.numeroDocumentoPasajero,
+    codigoIataLineaAerea: Number(fcv.codigoIataLineaAerea),
+    codigoIataAgenteViajes: fcv.codigoIataAgenteViajes || null,
+    nitAgenteViajes: fcv.nitAgenteViajes || null,
+    codigoOrigenServicio: fcv.codigoOrigenServicio,
+    montoTarifa: fcv.montoTarifa,
+    montoSujetoIva: fcv.montoSujetoIva,
+    montoTotal: fcv.montoTotal,
+    codigoTipoTransaccion: fcv.codigoTipoTransaccion,
+    usuario: fcv.usuario,
   }
-  if (fcv.numeroTarjeta) {
+  if (fcv.codigoMetodoPago.codigoClasificador === 2) {
     return { ...input, numeroTarjeta: fcv.numeroTarjeta }
   }
-  return input
+  // return { input, notificacion }
+  return [input]
 }
 export const composeFacturaValidator = async (fcv: any): Promise<boolean> => {
   setLocale(es)
   const schema = object({
-    //   codigoCliente: string()
-    //     .min(1)
-    //     .max(100)
-    //     .required('Debe seleccionar los datos del cliente'),
-    //   codigoMetodoPago: number().integer().min(1).max(308).required(),
-    //   numeroTarjeta: string().max(16),
-    //   montoGiftCard: number().min(0).nullable(),
-    //   codigoMoneda: number().integer().min(1).max(153),
-    //   tipoCambio: number().min(0),
-    //   descuentoAdicional: number().min(0).required(),
-    //   actividadEconomica: string().required(),
-    //   detalle: array()
-    //     .of(
-    //       object({
-    //         codigoProductoSin: number().integer().min(1).max(99999999).required(),
-    //         codigoProducto: string().min(1).max(50).required(),
-    //         descripcion: string().min(1).max(500).required(),
-    //         cantidad: number().min(0).required(),
-    //         unidadMedida: number().integer().min(1).required(),
-    //         precioUnitario: number().min(0).required(),
-    //         montoDescuento: number().min(0),
-    //         numeroSerie: string().min(0).max(1500),
-    //         numeroImei: string().min(0).max(1500),
-    //       }),
-    //     )
-    //     .min(1, 'Debe seleccionar al menos 1 productos / servicio para el detalle'),
+    numeroFactura: string().required(),
+    fechaEmision: string().required(),
+    cliente: object({
+      codigoCliente: string().required(),
+      razonSocial: string().required(),
+      numeroDocumento: string().required(),
+      complemento: string().required(),
+      codigoTipoDocumentoIdentidad: number().required(),
+      email: string().email().required(),
+    }).required(),
+    actividadEconomica: object({
+      codigoActividad: string().required(),
+    }).required(),
+    codigoMetodoPago: object({
+      codigoClasificador: string().required(),
+    }).required(),
+    moneda: object({
+      codigo: string().required(),
+      tipoCambio: number().required(),
+    }).required(),
+    nombrePasajero: string().required(),
+    numeroDocumentoPasajero: string().required(),
+    codigoIataLineaAerea: string().required(),
+    codigoIataAgenteViajes: string().required(),
+    nitAgenteViajes: string().required(),
+    codigoOrigenServicio: string().required(),
+    montoTarifa: number().required(),
+    montoSujetoIva: number().required(),
+    montoTotal: number().required(),
+    codigoTipoTransaccion: string().required(),
   })
 
-  await schema.validate(fcv)
-  return true
+  try {
+    await schema.validate(fcv, { abortEarly: false })
+    return true
+  } catch (error: any) {
+    console.error('Errores de validación:', error.errors)
+    return true
+  }
 }
 

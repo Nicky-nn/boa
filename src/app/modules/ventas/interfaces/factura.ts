@@ -39,6 +39,7 @@ export interface FacturaInputProps {
   codigoExcepcion: number | null
   codigoMetodoPago: MetodoPagoProp
   codigoMoneda: number
+  razonsocial: string
   descuentoAdicional: number
   detalle: FacturaDetalleInputProps[]
   detalleExtra?: string | null
@@ -63,6 +64,10 @@ export interface FacturaInputProps {
   montoTarifa?: number
   montoSujetoIva?: number
   montoTotal?: number
+  numeroFactura?: number
+  fechaEmision?: string
+  usuario?: string
+
 }
 
 /**
@@ -92,6 +97,8 @@ export const FacturaInitialValues: FacturaInputProps = {
   total: 0,
   inputMontoPagar: 0,
   inputVuelto: 0,
+  razonsocial: '',
+  codigoIataLineaAerea: '',
 }
 
 export interface RepresentacionGraficaProps {

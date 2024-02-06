@@ -70,7 +70,6 @@ const AnularDocumentoDialog: FunctionComponent<Props> = (props: Props) => {
       toast.error('Seleccione el motivo de la anulación')
       aux = false
     }
-    console.log(factura)
     if (aux) {
       Swal.fire({
         ...swalConfirm,
@@ -83,7 +82,6 @@ const AnularDocumentoDialog: FunctionComponent<Props> = (props: Props) => {
         allowOutsideClick: () => !Swal.isLoading(),
       })
         .then((result) => {
-          console.log(result)
           if (result.isConfirmed) {
             toast.success('Documento Anulado correctamente')
             onClose(true)

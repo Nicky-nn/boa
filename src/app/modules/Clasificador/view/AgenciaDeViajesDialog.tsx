@@ -41,7 +41,6 @@ const AgenciaDeViajesDialog: FunctionComponent<Props> = (props) => {
     initialValues: AGENCIA_INITIAL_VALUES,
     validationSchema: agenciaRegistroValidationSchema,
     onSubmit: async (values) => {
-      console.log('values', values)
       await swalAsyncConfirmDialog({
         preConfirm: () => {
           return apiAgenciaRegistro(

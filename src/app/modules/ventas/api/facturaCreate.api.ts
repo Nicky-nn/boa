@@ -7,6 +7,7 @@ import { ClasificadorProps } from '../../../interfaces'
 import { SinActividadesProps } from '../../sin/interfaces/sin.interface'
 
 export interface FacturaProps {
+  facturaBoletoAereoRegistro: FacturaProps
   sinTipoMetodoPago: ClasificadorProps[]
   sinUnidadMedida: ClasificadorProps[]
   sinActividades: SinActividadesProps[]
@@ -15,16 +16,15 @@ export interface FacturaProps {
 const genDetalle = () => {}
 
 export const FCV_ONLINE = gql`
-  mutation FCV_ONLINE($input: FacturaCompraVentaInput!) {
-    facturaCompraVentaCreate(input: $input) {
-      _id
-      state
-      numeroFactura
-      representacionGrafica {
-        pdf
-        rollo
-        xml
-        sin
+  mutation FCV_ONLINE($input: [FacturaBoletoAereoInput]!) {
+    facturaBoletoAereoRegistro(input: $input) {
+      estado
+      archivos{
+        id
+        fila
+        cuf
+        numeroFactura
+        errores
       }
     }
   }
@@ -37,5 +37,12 @@ export const fetchFacturaCreate = async (input: any): Promise<FacturaProps> => {
   client.setHeader('authorization', `Bearer ${token}`)
 
   const data: any = await client.request(FCV_ONLINE, { input })
-  return data.facturaCompraVentaCreate
+
+  if(data.facturaBoletoAereoRegistro.estado === 'OBSERVADO') {
+    console.error(data.facturaBoletoAereoRegistro.archivos[0].errores)
+    throw new Error(data.facturaBoletoAereoRegistro.archivos[0].errores)
+  }
+
+  return data.facturaBoletoAereoRegistro
 }
+

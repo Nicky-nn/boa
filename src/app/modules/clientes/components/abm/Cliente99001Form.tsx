@@ -7,6 +7,7 @@ import { actionForm } from '../../../../interfaces'
 import { Cliente99001InputProps } from '../../interfaces/cliente'
 
 interface OwnProps {
+  // @ts-ignore
   form: UseFormReturn<Cliente99001InputProps>
 }
 

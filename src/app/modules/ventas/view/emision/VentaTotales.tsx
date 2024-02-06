@@ -87,6 +87,14 @@ import OrigenDialog from '../../../Clasificador/view/OrigenDialog'
 import TipoDialog from '../../../Clasificador/view/TipoDialog'
 import { NumeroMask } from '../../../../base/components/MyInputs/NumeroMask'
 
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { esES } from '@mui/x-date-pickers/locales'
+import dayjs from 'dayjs'
+import { apiFacturaListado } from '../../api/factura.listado.api'
+import { apiFacturaListado2 } from '../../api/fcaturaListado'
+
 interface OwnProps {
   form: UseFormReturn<FacturaInputProps>
 }
@@ -95,7 +103,7 @@ type Props = OwnProps
 
 const VentaTotales: FunctionComponent<Props> = (props) => {
   const {
-    user: { moneda, monedaTienda },
+    user: { moneda, monedaTienda, usuario },
   } = useAuth()
   const {
     form: {
@@ -114,9 +122,10 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
   const tipoCambio = getValues('tipoCambio')
 
   const handleFocus = (event: any) => event.target.select()
+
   const onSubmit: SubmitHandler<FacturaInputProps> = async (data) => {
-    console.log('data', data)
     const inputFactura = composeFactura(data)
+
     const validator = await composeFacturaValidator(inputFactura).catch((err: Error) => {
       notError(err.message)
     })
@@ -129,7 +138,7 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
             return false
           })
         },
-      }).then((resp) => {
+      }).then(async (resp) => {
         if (resp.isConfirmed) {
           const { value }: any = resp
           reset({ ...FacturaInitialValues, actividadEconomica: data.actividadEconomica })
@@ -142,11 +151,13 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
             )
           }
 
+          const query = 'numeroFactura=' + value.archivos[0].numeroFactura
+          const x = await apiFacturaListado2(query)
           mySwal.fire({
-            title: `Documento generado correctamente`,
+            title: `Documento generado en Estado: ${value.estado}`,
             html: (
               <RepresentacionGraficaUrls
-                representacionGrafica={value.representacionGrafica}
+                representacionGrafica={x.docs[0].representacionGrafica}
               />
             ),
           })
@@ -179,6 +190,7 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
   })
 
   const { metodosPago, mpIsError, mpError, mpLoading } = useQueryMetodosPago()
+  const { form } = props
 
   /* OBTENIENDO DATOS DE LA API PATA IATA AEROLINA AEREA*/
 
@@ -291,6 +303,37 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
       textDecoration: 'none',
     },
   }
+
+  const [primerPeriodoFacturado, setPrimerPeriodoFacturado] = useState<string | null>(
+    null,
+  )
+  useEffect(() => {
+    setIsChecked(false)
+    setSelectedOptionAgente([])
+    setSelectedOptionOrigen([])
+    setSelectedOptionTransaccion([])
+    setSelectedOption([])
+
+    // Obtén el valor actual del periodo facturado
+    const periodoFacturadoActual = form.getValues('fechaEmision')
+    // Cambiar el check a false
+    // Si el periodo facturado actual es nulo o está vacío, establece un valor predeterminado
+    if (!periodoFacturadoActual) {
+      const valorPredeterminado = dayjs().format('DD/MM/YYYY HH:mm:ss')
+      // Establece el valor predeterminado utilizando setValue
+      form.setValue('fechaEmision', valorPredeterminado)
+      setIsChecked(false)
+      // Actualiza el estado con el valor predeterminado
+      setPrimerPeriodoFacturado(valorPredeterminado)
+
+      setIsCheckedExecpcion(false)
+      form.setValue('codigoExcepcion', 0)
+
+    } else {
+      // Si ya hay un valor, simplemente actualiza el estado con ese valor
+      setPrimerPeriodoFacturado(periodoFacturadoActual)
+    }
+  }, [form, form.getValues('fechaEmision')])
 
   return (
     <>
@@ -426,6 +469,63 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                   </Box>
                 </>
               )}
+            </Grid>
+            <Grid item xs={12} sm={12} md={6}>
+              <Controller
+                control={control}
+                name={'numeroFactura'}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    error={Boolean(errors.numeroFactura)}
+                    fullWidth
+                    name={'numeroFactura'}
+                    size={'small'}
+                    label="Número de Factura"
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    helperText={errors.numeroFactura?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6}>
+              <Controller
+                name="fechaEmision"
+                control={form.control}
+                render={({ field }) => (
+                  <FormControl
+                    fullWidth
+                    error={Boolean(form.formState.errors.fechaEmision)}
+                  >
+                    <LocalizationProvider
+                      dateAdapter={AdapterDayjs}
+                      localeText={
+                        esES.components.MuiLocalizationProvider.defaultProps.localeText
+                      }
+                      adapterLocale={'es'}
+                    >
+                      <MobileDateTimePicker
+                        defaultValue={dayjs()}
+                        loading={false}
+                        label="Fecha y hora de emisión"
+                        sx={{ width: '100%' }}
+                        views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
+                        onChange={(date) => {
+                          form.setValue(
+                            'fechaEmision',
+                            date?.format('DD/MM/YYYY HH:mm:ss'),
+                          )
+                        }}
+                      />
+                    </LocalizationProvider>
+                    <FormHelperText>
+                      {form.formState.errors.fechaEmision?.message}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              />
             </Grid>
 
             <Grid item lg={6} md={12} xs={12}>
@@ -574,7 +674,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                           size={'small'}
                           label="Nombre Pasajero"
                           value={field.value || ''}
-                          onChange={field.onChange}
+                          // onChange={field.onChange} // Fix: Assign a valid change event handler function here
+                          onChange={(e) => {
+                            field.onChange(e) // Asegúrate de llamar a field.onChange para actualizar el valor en el controlador
+                            setValue('nombrePasajero', e.target.value) // Usa setValue para actualizar el valor
+                          }}
                           onBlur={field.onBlur}
                           helperText={errors.nombrePasajero?.message}
                         />
@@ -655,7 +759,10 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                           size={'small'}
                           label="Número Documento Pasajero"
                           value={field.value || ''}
-                          onChange={field.onChange}
+                          onChange={(e) => {
+                            field.onChange(e)
+                            setValue('numeroDocumentoPasajero', e.target.value)
+                          }}
                           onBlur={field.onBlur}
                           helperText={errors.numeroDocumentoPasajero?.message}
                         />
@@ -670,12 +777,37 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                         <FormControl fullWidth component={'div'}>
                           <MyInputLabel shrink>Código IATA Línea Aérea</MyInputLabel>
                           <Select
-                            styles={reactSelectStyles}
+                            styles={{
+                              ...reactSelectStyles,
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                borderColor: state.isFocused
+                                  ? 'grey'
+                                  : errors.codigoIataLineaAerea
+                                  ? 'red'
+                                  : 'grey',
+                                borderWidth: errors.codigoIataLineaAerea ? '2px' : '1px', // Grosor del borde
+                                ':hover': {
+                                  ...baseStyles[':hover'],
+                                  borderColor: state.isFocused
+                                    ? 'grey'
+                                    : errors.codigoIataLineaAerea
+                                    ? 'red'
+                                    : 'grey',
+                                },
+                              }),
+                            }}
                             menuPosition={'fixed'}
                             name="codigoIataLineaAerea"
                             placeholder={'Seleccione...'}
                             value={selectedOption}
-                            onChange={(selected) => setSelectedOption(selected)}
+                            onChange={(selected) => {
+                              setSelectedOption(selected)
+                              setValue(
+                                'codigoIataLineaAerea',
+                                selected?.codigoIataLineaAerea,
+                              )
+                            }}
                             options={options}
                             getOptionLabel={(ps) =>
                               `${ps.codigoIata}  ${ps.descripcion}  ${ps.codigoIataLineaAerea}`
@@ -684,9 +816,15 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             isClearable={true}
                             onMenuOpen={() => obtenerDatos()}
                           />
+                          {errors.codigoIataLineaAerea && (
+                            <FormHelperText style={{ color: 'red' }}>
+                              {errors.codigoIataLineaAerea?.message}
+                            </FormHelperText>
+                          )}
                         </FormControl>
                       )}
                     />
+
                     <Box display="flex" justifyContent="flex-end">
                       <Link
                         component="button"
@@ -710,14 +848,40 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                         <FormControl fullWidth component={'div'}>
                           <MyInputLabel shrink>Código IATA Agente de Viajes</MyInputLabel>
                           <Select
-                            styles={reactSelectStyles}
+                            styles={{
+                              ...reactSelectStyles,
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                borderColor: state.isFocused
+                                  ? 'grey'
+                                  : errors.codigoIataAgenteViajes
+                                  ? 'red'
+                                  : 'grey',
+                                borderWidth: errors.codigoIataAgenteViajes
+                                  ? '2px'
+                                  : '1px', // Grosor del borde
+                                ':hover': {
+                                  ...baseStyles[':hover'],
+                                  borderColor: state.isFocused
+                                    ? 'grey'
+                                    : errors.codigoIataAgenteViajes
+                                    ? 'red'
+                                    : 'grey',
+                                },
+                              }),
+                            }}
+                            // styles={reactSelectStyles}
                             menuPosition={'fixed'}
                             name="codigoIataAgenteViajes"
                             placeholder={'Seleccione...'}
-                            value={selectedOptionAgente}
+                            value={selectedOptionAgente || ''}
                             onChange={(selected) => {
                               setSelectedOptionAgente(selected)
                               setValue('nitAgenteViajes', selected?.nitAgenteViajes)
+                              setValue(
+                                'codigoIataAgenteViajes',
+                                selected?.codigoIataAgenteViajes,
+                              )
                             }}
                             options={optionsAgente}
                             getOptionLabel={(ps) =>
@@ -727,6 +891,10 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             isClearable={true}
                             onMenuClose={() => obtenerDatos()}
                           />
+
+                          <FormHelperText style={{ color: 'red' }}>
+                            {errors.codigoIataAgenteViajes?.message}
+                          </FormHelperText>
                         </FormControl>
                       )}
                     />
@@ -758,7 +926,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                           size={'small'}
                           label="NIT Agente de Viajes"
                           value={field.value || ''}
-                          onChange={field.onChange}
+                          // onChange={field.onChange}
+                          onChange={(e) => {
+                            field.onChange(e)
+                            setValue('nitAgenteViajes', e.target.value)
+                          }}
                           onBlur={field.onBlur}
                           helperText={errors.nitAgenteViajes?.message}
                         />
@@ -773,12 +945,38 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                         <FormControl fullWidth component={'div'}>
                           <MyInputLabel shrink>Código Origen Servicio</MyInputLabel>
                           <Select
-                            styles={reactSelectStyles}
+                            styles={{
+                              ...reactSelectStyles,
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                borderColor: state.isFocused
+                                  ? 'grey'
+                                  : errors.codigoOrigenServicio
+                                  ? 'red'
+                                  : 'grey',
+                                borderWidth: errors.codigoOrigenServicio ? '2px' : '1px', // Grosor del borde
+                                ':hover': {
+                                  ...baseStyles[':hover'],
+                                  borderColor: state.isFocused
+                                    ? 'grey'
+                                    : errors.codigoOrigenServicio
+                                    ? 'red'
+                                    : 'grey',
+                                },
+                              }),
+                            }}
                             menuPosition={'fixed'}
                             name="codigoOrigenServicio"
                             placeholder={'Seleccione...'}
                             value={selectedOptionOrigen}
-                            onChange={(selected) => setSelectedOptionOrigen(selected)}
+                            // onChange={(selected) => setSelectedOptionOrigen(selected)}
+                            onChange={(selected) => {
+                              setSelectedOptionOrigen(selected)
+                              setValue(
+                                'codigoOrigenServicio',
+                                selected?.codigoOrigenServicio,
+                              )
+                            }}
                             options={optionsOrigen}
                             getOptionLabel={(ps) =>
                               `${ps.codigoOrigenServicio}  ${ps.descripcion}`
@@ -787,6 +985,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             isClearable={true}
                             onMenuClose={() => obtenerDatos()}
                           />
+                          {errors.codigoOrigenServicio && (
+                            <FormHelperText style={{ color: 'red' }}>
+                              {errors.codigoOrigenServicio?.message}
+                            </FormHelperText>
+                          )}
                         </FormControl>
                       )}
                     />
@@ -813,14 +1016,41 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                         <FormControl fullWidth component={'div'}>
                           <MyInputLabel shrink>Código Tipo Transacción</MyInputLabel>
                           <Select
-                            styles={reactSelectStyles}
+                            // styles={reactSelectStyles}
+                            styles={{
+                              ...reactSelectStyles,
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                borderColor: state.isFocused
+                                  ? 'grey'
+                                  : errors.codigoOrigenServicio
+                                  ? 'red'
+                                  : 'grey',
+                                borderWidth: errors.codigoOrigenServicio ? '2px' : '1px', // Grosor del borde
+                                ':hover': {
+                                  ...baseStyles[':hover'],
+                                  borderColor: state.isFocused
+                                    ? 'grey'
+                                    : errors.codigoOrigenServicio
+                                    ? 'red'
+                                    : 'grey',
+                                },
+                              }),
+                            }}
                             menuPosition={'fixed'}
                             name="codigoTipoTransaccion"
                             placeholder={'Seleccione'}
                             value={selectedOptionTransaccion}
-                            onChange={(selected) =>
+                            // onChange={(selected) =>
+                            //   setSelectedOptionTransaccion(selected)
+                            // }
+                            onChange={(selected) => {
                               setSelectedOptionTransaccion(selected)
-                            }
+                              setValue(
+                                'codigoTipoTransaccion',
+                                selected?.codigoTipoTransaccion,
+                              )
+                            }}
                             options={optionsTransaccion}
                             getOptionLabel={(ps) =>
                               `${ps.codigoTipoTransaccion}  ${ps.descripcion}`
@@ -843,6 +1073,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                               ¿Nuevo Código Transacción?
                             </Link>
                           </Box>
+                          {errors.codigoTipoTransaccion && (
+                            <FormHelperText style={{ color: 'red' }}>
+                              {errors.codigoTipoTransaccion?.message}
+                            </FormHelperText>
+                          )}
                         </FormControl>
                       )}
                     />
@@ -862,7 +1097,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             size={'small'}
                             value={field.value?.toString()}
                             onFocus={handleSelect}
-                            onChange={field.onChange}
+                            // onChange={field.onChange}
+                            onChange={(e) => {
+                              field.onChange(e)
+                              setValue('montoTarifa', parseInt(e.target.value))
+                            }}
                             onBlur={field.onBlur}
                             inputComponent={NumeroMask as any}
                             inputProps={{}}
@@ -896,7 +1135,11 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             size={'small'}
                             value={field.value?.toString()}
                             onFocus={handleSelect}
-                            onChange={field.onChange}
+                            // onChange={field.onChange}
+                            onChange={(e) => {
+                              field.onChange(e)
+                              setValue('montoTotal', parseInt(e.target.value))
+                            }}
                             onBlur={field.onBlur}
                             inputComponent={NumeroMask as any}
                             inputProps={{}}
@@ -922,7 +1165,12 @@ const VentaTotales: FunctionComponent<Props> = (props) => {
                             size={'small'}
                             value={field.value?.toString()}
                             onFocus={handleSelect}
-                            onChange={field.onChange}
+                            // onChange={field.onChange}
+                            onChange={(e) => {
+                              field.onChange(e)
+                              setValue('montoSujetoIva', parseInt(e.target.value))
+                              setValue('usuario', usuario)
+                            }}
                             onBlur={field.onBlur}
                             inputComponent={NumeroMask as any}
                             inputProps={{}}

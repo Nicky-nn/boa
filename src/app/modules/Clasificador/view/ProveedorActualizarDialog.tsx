@@ -12,6 +12,7 @@ import {
   ALICUOTA_INITIAL_VALUES,
   AlicuotaInputProp,
   AlicuotaProps,
+  BoletoIataAereoInputProp,
 } from '../interfaces/alicuota.interface'
 import { proveedorRegistroValidationSchema } from '../validator/proveedorRegistro.validator'
 import ProveedorForm from './AirAerolinesForm'
@@ -85,7 +86,7 @@ const ProveedorActualizar: FunctionComponent<Props> = (props) => {
     >
       <DialogTitle>Editar Alicuota {props.codigo}</DialogTitle>
       <DialogContent dividers>
-        <ProveedorForm formik={formik} />
+        <ProveedorForm formik={formik as unknown as FormikProps<BoletoIataAereoInputProp>} />
       </DialogContent>
       <DialogActions>
         <Button

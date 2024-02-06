@@ -3,7 +3,7 @@ import { Publish } from '@mui/icons-material'
 import { Button, Paper, Stack } from '@mui/material'
 import { subMonths } from 'date-fns'
 import React, { FunctionComponent } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm, UseFormReturn } from 'react-hook-form'
 
 import SimpleContainer from '../../../../base/components/Container/SimpleContainer'
 import Breadcrumb from '../../../../base/components/Template/Breadcrumb/Breadcrumb'
@@ -31,6 +31,7 @@ const EmisionMasiva: FunctionComponent<Props> = (props) => {
       gestion: getDateListAnio(new Date()),
       mes: getDateListMes(subMonths(new Date(), 1)),
     },
+    // @ts-ignore
     resolver: yupResolver(EmisionMasivaValidatorSchema),
   })
 
@@ -90,13 +91,14 @@ const EmisionMasiva: FunctionComponent<Props> = (props) => {
               color={'success'}
               startIcon={<Publish />}
               variant={'contained'}
+              // @ts-ignore
               onClick={form.handleSubmit(onSubmit, onError)}
             >
               Importar archivo
             </Button>
           </Stack>
         </Paper>
-        <EmisionMasivaForm form={form} />
+        <EmisionMasivaForm form={form as unknown as UseFormReturn<EmisionMasivaInputProps>} />
       </SimpleContainer>
     </>
   )

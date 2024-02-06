@@ -14,6 +14,7 @@ export interface ClienteProps extends AuditoriaProps {
   tipoDocumentoIdentidad: SinTipoDocumentoIdentidadProps
   state: string
   telefono: string
+  codigoTipoDocumentoIdentidad: number
 }
 
 export interface ClienteInputProps {

@@ -35,6 +35,7 @@ const ClienteActualizarDialog: FunctionComponent<Props> = (props) => {
       ...CLIENTE_DEFAULT_INPUT,
       action: actionForm.UPDATE,
     },
+    //@ts-ignore
     resolver: yupResolver(clienteInputValidator),
   })
 
@@ -88,7 +89,10 @@ const ClienteActualizarDialog: FunctionComponent<Props> = (props) => {
       >
         <DialogTitle>Actualizar cliente {cliente.razonSocial}</DialogTitle>
         <DialogContent dividers>
-          <ClienteForm form={form} />
+          <ClienteForm
+            //@ts-ignore
+            form={form}
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -103,6 +107,7 @@ const ClienteActualizarDialog: FunctionComponent<Props> = (props) => {
             Cancelar
           </Button>
           <Button
+            //@ts-ignore
             onClick={form.handleSubmit(onSubmit, onError)}
             style={{ marginRight: 15 }}
             size={'small'}
@@ -118,3 +123,4 @@ const ClienteActualizarDialog: FunctionComponent<Props> = (props) => {
 }
 
 export default ClienteActualizarDialog
+

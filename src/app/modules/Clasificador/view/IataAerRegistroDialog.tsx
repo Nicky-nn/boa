@@ -37,7 +37,6 @@ const ProveedorRegistro: FunctionComponent<Props> = (props) => {
       initialValues: IATA_AER_INITIAL_VALUES,
       validationSchema: iataAirRegistroValidationSchema,
       onSubmit: async (values) => {
-        console.log('values', values)
         await swalAsyncConfirmDialog({
           preConfirm: () => {
             return apiIataAerRegistro(

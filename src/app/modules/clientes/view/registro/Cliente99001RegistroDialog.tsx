@@ -33,6 +33,7 @@ const Cliente99001RegistroDialog: FunctionComponent<Props> = (props) => {
     defaultValues: {
       ...CLIENTE_99001_DEFAULT_INPUT,
     },
+    // @ts-ignore
     resolver: yupResolver(cliente99001InputValidator),
   })
 
@@ -85,7 +86,10 @@ const Cliente99001RegistroDialog: FunctionComponent<Props> = (props) => {
       >
         <DialogTitle>Registro Nuevo Cliente 99001</DialogTitle>
         <DialogContent dividers>
-          <Cliente99001Form form={form} />
+          <Cliente99001Form
+            // @ts-ignore
+            form={form}
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -100,6 +104,7 @@ const Cliente99001RegistroDialog: FunctionComponent<Props> = (props) => {
             Cancelar
           </Button>
           <Button
+            //@ts-ignore
             onClick={form.handleSubmit(onSubmit, onError)}
             style={{ marginRight: 15 }}
             size={'small'}
@@ -114,3 +119,4 @@ const Cliente99001RegistroDialog: FunctionComponent<Props> = (props) => {
 }
 
 export default Cliente99001RegistroDialog
+

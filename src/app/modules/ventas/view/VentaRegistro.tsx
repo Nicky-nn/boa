@@ -3,21 +3,14 @@ import { Divider, Grid } from '@mui/material'
 import { Box, Container, padding } from '@mui/system'
 import { UseFormReturn, useForm } from 'react-hook-form'
 
-import AlertLoading from '../../../base/components/Alert/AlertLoading'
 import SimpleContainer from '../../../base/components/Container/SimpleContainer'
 import Breadcrumb from '../../../base/components/Template/Breadcrumb/Breadcrumb'
-import SimpleCard from '../../../base/components/Template/Cards/SimpleCard'
 import useAuth from '../../../base/hooks/useAuth'
 // import usePlantillaDetalleExtra from '../../base/detalleExtra/hook/usePlantillaDetalleExtra'
 import { FacturaInitialValues, FacturaInputProps } from '../interfaces/factura'
 import { VentaRegistroValidator } from '../validator/ventaRegistroValidator'
 import DatosActividadEconomica from './emision/DatosActividadEconomica'
-import { DatosTransaccionComercial } from './emision/DatosTransaccionComercial'
-import { DetalleTransaccionComercial } from './emision/DetalleTransaccionComercial'
-import FacturaDetalleExtra from './emision/FacturaDetalleExtra'
-import MetodosPago from './emision/MetodosPago'
 import VentaTotales from './emision/VentaTotales'
-import DatosCliente from './emision/DatosCliente'
 
 const VentaRegistro = () => {
   const { user } = useAuth()

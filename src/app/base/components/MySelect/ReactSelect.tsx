@@ -37,4 +37,8 @@ export const reactSelectStyles: StylesConfig<any> | undefined = {
     ...base,
     color: '#a4a4a4',
   }),
+  // Nuevo formato de color red en los border del input si hay errores como {errors.codigoIataLineaAerea?.message}
+  
+
+
 }

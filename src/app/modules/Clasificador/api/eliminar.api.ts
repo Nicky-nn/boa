@@ -33,7 +33,6 @@ const boaTipoTransaccionEliminar = gql`
 export const iataAerolineaEliminar = async (
   codigoIataLineaAerea: number,
 ): Promise<boolean> => {
-  console.log('codigoIataLineaAerea', codigoIataLineaAerea)
   // convertir a number
   codigoIataLineaAerea = Number(codigoIataLineaAerea)
   const client = new GraphQLClient(import.meta.env.ISI_API_URL)

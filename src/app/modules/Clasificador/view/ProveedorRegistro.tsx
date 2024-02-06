@@ -48,10 +48,13 @@ const ProveedorRegistro: FunctionComponent<Props> = (props) => {
         />
       </div>
 
-      <ProveedorForm formik={formik} />
+      <ProveedorForm
+        formik={formik as unknown as FormikProps<any>}
+      />
       <Box py="12px" />
     </Container>
   )
 }
 
 export default ProveedorRegistro
+
