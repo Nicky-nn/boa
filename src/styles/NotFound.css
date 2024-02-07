@@ -1,0 +1,129 @@
+/*=============== GOOGLE FONTS ===============*/
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+/*=============== VARIABLES CSS ===============*/
+:root {
+  --header-height: 3.5rem;
+
+  /*========== Colors ==========*/
+  /*Color mode HSL(hue, saturation, lightness)*/
+  /* --first-color: hsl(38, 69%, 59%); */
+  --first-color: hsl(208, 98%, 38%);
+  --text-color: hsl(38, 8%, 8%);
+
+  /*========== Font and typography ==========*/
+  /*.5rem = 8px | 1rem = 16px ...*/
+  --body-font: 'Space Grotesk', sans-serif;
+  --biggest-font-size: 2.375rem;
+  --normal-font-size: 0.938rem;
+  --smaller-font-size: 0.75rem;
+}
+
+/* Responsive typography */
+@media screen and (min-width: 1024px) {
+  :root {
+    --biggest-font-size: 2rem;
+    --normal-font-size: 1rem;
+    --smaller-font-size: 0.813rem;
+  }
+}
+
+.mainNick {
+  overflow: hidden; /* For the animations ScrollReveal */
+}
+
+/*============= NOTFOUND.CSS ==============*/
+/* Elimina las reglas CSS no utilizadas y deja solo las necesarias para NotFound */
+
+.homeNick {
+  background-color: var(--first-color);
+  height: 100vh;
+  display: grid;
+}
+
+.homeNick__container {
+  display: grid;
+  align-content: center;
+  row-gap: 2.5rem;
+}
+
+.homeNick__data {
+  text-align: center;
+}
+
+.homeNick__title {
+  font-size: var(--biggest-font-size);
+  margin: 0.75rem 0;
+  color: #fff;
+}
+
+.homeNick__button {
+  margin-top: 2rem;
+  display: inline-block;
+  background-color: var(--text-color);
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 3rem;
+  transition: 0.4s;
+}
+
+.homeNick__button:hover {
+  box-shadow: 0 4px 12px hsla(38, 69%, 8%, 0.2);
+}
+
+.homeNick__img img {
+  width: 230px;
+  animation: floaty 1.8s infinite alternate;
+}
+
+.homeNick__img {
+  justify-self: center;
+}
+
+.homeNick__shadow {
+  width: 130px;
+  height: 24px;
+  background-color: hsla(38, 21%, 19%, 0.16);
+  margin: 0 auto;
+  border-radius: 50%;
+  filter: blur(7px);
+  animation: shadow 1.8s infinite alternate;
+}
+
+.homeNick__description {
+  color: #fff;
+  font-size: var(--normal-font-size);
+}
+
+.homeNick__subtitle {
+  color: #fff;
+  font-size: var(--normal-font-size);
+}
+
+.homeNick__footer {
+  display: flex;
+  justify-content: center;
+  column-gap: 0.5rem;
+  font-size: var(--smaller-font-size);
+  align-self: flex-end;
+}
+
+/* Animate ghost */
+@keyframes floaty {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(15px);
+  }
+}
+
+@keyframes shadow {
+  0% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(0.85, 0.85);
+  }
+}
+

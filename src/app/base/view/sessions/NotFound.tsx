@@ -1,49 +1,50 @@
+/* eslint-disable jsx-a11y/alt-text */
+import '../../../../../src/styles/NotFound.css'
+
 import { Button } from '@mui/material'
-import { Box, styled } from '@mui/system'
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useRef } from 'react'
 
-const FlexBox = styled(Box)(() => ({
-  display: 'flex',
-  alignItems: 'center',
-}))
-
-const JustifyBox = styled(FlexBox)(() => ({
-  maxWidth: 320,
-  flexDirection: 'column',
-  justifyContent: 'center',
-}))
-
-const IMG = styled('img')(() => ({
-  width: '100%',
-  marginBottom: '32px',
-}))
-
-const NotFoundRoot = styled(FlexBox)(() => ({
-  width: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100vh !important',
-}))
-
-const NotFound = () => {
-  const navigate = useNavigate()
-
+const NotFound: React.FC = () => {
   return (
-    <NotFoundRoot>
-      <JustifyBox>
-        <IMG src="/assets/images/illustrations/404.svg" alt="" />
-        <Button
-          color="primary"
-          variant="contained"
-          sx={{ textTransform: 'capitalize' }}
-          onClick={() => navigate(-1)}
-        >
-          Back to Dashboard
-        </Button>
-      </JustifyBox>
-    </NotFoundRoot>
+    <>
+      {/* ==================== MAIN ==================== */}
+      <main className="mainNick">
+        {/* ==================== HOME ==================== */}
+        <section className="homeNick">
+          <div className="homeNick__container container">
+            <div className="homeNick__data">
+              <span className="homeNick__subtitle">Error 404</span>
+              {/* <h1 className="homeNick__title">Hey Buddy</h1> */}
+              <h1 className="homeNick__title">Upss.....</h1>
+              <p className="homeNick__description">
+                No Pudimos Encontrar la página <br /> que buscabas.
+              </p>
+              {/* <a href="#" className="homeNick__button"> */}
+              <Button className="homeNick__button" href="/">
+                Volver a Inicio
+              </Button>
+            </div>
+
+            <div className="homeNick__img">
+              <img
+                // src="https://github.com/Nicky-nn/Nicky-nn/blob/main/ghost-img.png?raw=true"
+                src="/assets/images/ghost-img.png"
+                alt=""
+              />
+              <div className="homeNick__shadow"></div>
+            </div>
+          </div>
+
+          <footer className="homeNick__footer">
+            <span>(591) 68048228</span>
+            <span>|</span>
+            <span>contactos@integrate.com.bo</span>
+          </footer>
+        </section>
+      </main>
+    </>
   )
 }
 
 export default NotFound
+
